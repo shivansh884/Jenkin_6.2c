@@ -1,0 +1,57 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building using Maven...'
+                git branch: 'main', url: 'https://github.com/shivansh884/Jenkin_6.2c.git'
+                
+                }
+            }
+        }
+
+        stage('Unit and Integration Tests') {
+            steps {
+                echo 'Testing using JUnit & Selenium...'
+                
+                }
+            }
+        }
+
+        stage('Code Analysis') {
+            steps {
+                echo 'Code quality check using SonarQube...'
+               
+                }
+            }
+        }
+
+        stage('Security Scan') {
+            steps {
+                echo 'Security scan using OWASP Dependency Check...'
+                
+                }
+            }
+        }
+
+        stage('Deploy to Staging') {
+            steps {
+                echo "Deploying using AWS"
+            }
+        }
+
+        stage('Integration Tests on Staging') {
+            steps {
+                echo "Testing in staging using Postman"
+               
+            }
+        }
+
+        stage('Deploy to Production') {
+            steps {
+                echo "Deploying using AWS"
+            }
+        }
+    }
+}
