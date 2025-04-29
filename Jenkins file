@@ -4,54 +4,94 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Building using Maven...'
+                echo 'Building the project using Jenkins-configured Maven...'
                 git branch: 'main', url: 'https://github.com/shivansh884/Jenkin_6.2c.git'
-                
-                }
             }
         }
 
-        stage('Unit and Integration Tests') {
+         stage('Unit and Integration Tests') {
             steps {
-                echo 'Testing using JUnit & Selenium...'
-                
-                }
+                echo 'Running unit and integration tests...'
             }
         }
 
         stage('Code Analysis') {
             steps {
-                echo 'Code quality check using SonarQube...'
-               
-                }
+                echo 'Running code analysis with SonarQube...'
             }
         }
 
         stage('Security Scan') {
             steps {
-                echo 'Security scan using OWASP Dependency Check...'
-                
-                }
+                echo 'Performing security scan with OWASP Dependency Check...'
             }
         }
 
         stage('Deploy to Staging') {
             steps {
-                echo "Deploying using AWS"
+                echo "Deploying the application to staging environment on AWS..."
             }
         }
 
         stage('Integration Tests on Staging') {
             steps {
-                echo "Testing in staging using Postman"
-               
+                echo "Running integration tests on staging"
             }
         }
 
         stage('Deploy to Production') {
             steps {
-                echo "Deploying using AWS"
+                 echo "Deploying application to production on AWS"
             }
+        }
+    }
+
+    post {
+        success {
+            script {
+                def powershellCommand = '''
+                $SMTPServer = "smtp.gmail.com"
+                $SMTPPort = 587
+                $SMTPFrom = "shivansh0405@gmail.com"
+                $SMTPTo = "shivansh0405@gmail.com"
+                $SMTPSubject = "Successfully Execution of Pipeline!"
+                $SMTPBody = "Pipeline has been executed successfully"
+                $SMTPUsername = "shivansh0405@gmail.com"
+                $SMTPPassword = "ucwu hcjd nhtb wbzt" 
+                $SMTPEnableSSL = $true
+
+                $SMTPClient = New-Object Net.Mail.SmtpClient($SMTPServer, $SMTPPort)
+                $SMTPClient.EnableSsl = $SMTPEnableSSL
+                $SMTPClient.Credentials = New-Object System.Net.NetworkCredential($SMTPUsername, $SMTPPassword)
+                $SMTPClient.Send($SMTPFrom, $SMTPTo, $SMTPSubject, $SMTPBody)
+                '''
+                powershell(powershellCommand)
+            }
+            echo "SUCCESSFULL!"
+        }
+
+        failure {
+            script {
+                def powershellCommand = '''
+    
+                 $SMTPServer = "smtp.gmail.com"
+                $SMTPPort = 587
+                $SMTPFrom = "shivansh0405@gmail.com"
+                $SMTPTo = "shivansh0405@gmail.com"
+                $SMTPSubject = "Unsuccessfully Execution of Pipeline!"
+                $SMTPBody = "Pipeline does not execute successfully"
+                $SMTPUsername = "shivansh0405@gmail.com"
+                $SMTPPassword = "ucwu hcjd nhtb wbzt" 
+                $SMTPEnableSSL = $true
+
+                $SMTPClient = New-Object Net.Mail.SmtpClient($SMTPServer, $SMTPPort)
+                $SMTPClient.EnableSsl = $SMTPEnableSSL
+                $SMTPClient.Credentials = New-Object System.Net.NetworkCredential($SMTPUsername, $SMTPPassword)
+                $SMTPClient.Send($SMTPFrom, $SMTPTo, $SMTPSubject, $SMTPBody)
+                '''
+                powershell(powershellCommand)
+            }
+            echo "FAILED!"
         }
     }
 }
